@@ -1,0 +1,13 @@
+//= require lodash
+//= require angular
+//= require angular-cache
+//= require angular-ui-router
+//= require angular-translate
+//= require angular-ui-bootstrap
+//= require jquery
+//= require jquery_ujs
+//= require turbolinks
+//= require bootstrap.min
+//= require_tree ./controllers
+//= require_tree ./extends
+//= require_tree ./lib
