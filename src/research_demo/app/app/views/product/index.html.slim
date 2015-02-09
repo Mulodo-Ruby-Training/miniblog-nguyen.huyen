@@ -1,0 +1,61 @@
+.index-page.main-wrapper ng-app="ProductStore"
+  .container ng-controller="ProductCtrl" ng-init="search('')"
+    .content
+      .row.menu-bar
+        .col-md-4
+          input type="text" ng-model="key"
+          button.btn-search ng-click="search(key)"
+            span Search
+      .row
+        .col-md-3
+          button.btn-search ng-click="add()"
+            span (+) Add product
+        .col-md-6 ng-if="addMore == true"
+          p
+            |Name:
+          input type="text" ng-model="name"
+          p
+            |Description:
+          input type="textarea" ng-model ="description"
+          button.btn-search ng-click ="addProduct(name,description)"
+            span Add
+      .row
+        .col-md-4.paganetion
+          .pagenavi dir-paginate=("list in list_products | itemsPerPage: 20") total-items="total"
+          dir-pagination-controls on-page-change="pageChangeHandler(newPageNumber)" template-url='/assets/pagination/dirPagination.tpl.html.slim'
+      .row.list-items
+        .row.caption-tab
+          .col-md-1
+            p Id
+          .col-md-3
+            p Name
+          .col-md-3
+            p Description
+          .col-md-5
+            p Action
+        .list ng-repeat="list in list_products"
+          .row.item
+            .col-md-1
+              p ng-bind="list.id"
+            .col-md-3
+              input type="text"  value="list.name" ng-model="list.name" ng-if = "edit == list.id"
+              p ng-bind="list.name" ng-if = "edit != list.id"
+            .col-md-3
+              input  type="text"  value="list.description" ng-if= "edit == list.id" ng-model="list.description"
+              p ng-bind="list.description" ng-if = "edit != list.id"
+            .col-md-5
+              .col-md
+                button.btn-search ng-click="editProduct(list.id, list.name, list.description)" ng-if ="edit == list.id"
+                  span Ok
+              .col-md
+                button.btn-search ng-click="cancel_editProduct()" ng-if ="edit == list.id"
+                  span Cancel
+              .col-md ng-if = "edit != list.id"
+                button.btn-search ng-click="edit(list.id)"
+                  span Edit
+              .col-md
+                button.btn-search ng-click="del(list.id)"
+                  span Del
+      .row
+        .col-md-4.paganetion
+          dir-pagination-controls on-page-change="pageChangeHandler(newPageNumber)" template-url='/assets/pagination/dirPagination.tpl.html.slim'
