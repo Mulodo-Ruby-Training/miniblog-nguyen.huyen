@@ -1,4 +1,3 @@
-
 -- CREATE DATABASE
 CREATE DATABASE IF NOT EXISTS mini_blog
 CHARACTER SET utf8
@@ -52,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `post` (
   `title` varchar(250) NOT NULL,
   `short_description` text NOT NULL,
   `content` longtext NOT NULL,
-  `status` tinyint(2) NOT NULL,
+  `status` tinyint(2) NOT NULL DEFAULT '1',
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -66,10 +65,10 @@ CREATE TABLE IF NOT EXISTS `post` (
 CREATE TABLE IF NOT EXISTS `profile` (
 `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `first_name` varchar(20) NOT NULL,
-  `last_name` varchar(20) NOT NULL,
-  `gender` tinyint(2) NOT NULL,
-  `address` varchar(60) NOT NULL,
+  `first_name` varchar(60) NOT NULL,
+  `last_name` varchar(60) NOT NULL,
+  `gender` tinyint(2) NOT NULL DEFAULT '1',
+  `address` varchar(250) NOT NULL,
   `birth_day` datetime NOT NULL,
   `email` varchar(60) NOT NULL,
   `phone` varchar(20) NOT NULL,
