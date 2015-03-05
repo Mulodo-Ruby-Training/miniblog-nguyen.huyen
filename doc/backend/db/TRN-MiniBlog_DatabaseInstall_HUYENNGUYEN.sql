@@ -11,10 +11,10 @@ SET NAMES utf8;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comment`
+-- Table structure for table `comments`
 --
 
-CREATE TABLE IF NOT EXISTS `comment` (
+CREATE TABLE IF NOT EXISTS `comments` (
 `id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -26,10 +26,10 @@ CREATE TABLE IF NOT EXISTS `comment` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `image`
+-- Table structure for table `images`
 --
 
-CREATE TABLE IF NOT EXISTS `image` (
+CREATE TABLE IF NOT EXISTS `images` (
 `id` int(11) NOT NULL,
   `subject_id` int(11) NOT NULL,
   `subject_type` varchar(60) NOT NULL,
@@ -42,10 +42,10 @@ CREATE TABLE IF NOT EXISTS `image` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post`
+-- Table structure for table `posts`
 --
 
-CREATE TABLE IF NOT EXISTS `post` (
+CREATE TABLE IF NOT EXISTS `posts` (
 `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `title` varchar(250) NOT NULL,
@@ -59,10 +59,10 @@ CREATE TABLE IF NOT EXISTS `post` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `profile`
+-- Table structure for table `profiles`
 --
 
-CREATE TABLE IF NOT EXISTS `profile` (
+CREATE TABLE IF NOT EXISTS `profiles` (
 `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `first_name` varchar(60) NOT NULL,
@@ -79,50 +79,73 @@ CREATE TABLE IF NOT EXISTS `profile` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Table structure for table `schema_migrations`
 --
 
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `schema_migrations` (
+  `version` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `schema_migrations`
+--
+
+INSERT INTO `schema_migrations` (`version`) VALUES
+('20150227014635');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
 `id` int(11) NOT NULL,
-  `type` varchar(20) NOT NULL DEFAULT 'nomal',
+  `type` varchar(20) NOT NULL DEFAULT 'normal',
   `username` varchar(30) NOT NULL,
   `password` varchar(30) NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `comment`
+-- Indexes for table `comments`
 --
-ALTER TABLE `comment`
+ALTER TABLE `comments`
  ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`), ADD KEY `user_id_2` (`user_id`), ADD KEY `post_id` (`post_id`), ADD KEY `user_id_3` (`user_id`);
 
 --
--- Indexes for table `image`
+-- Indexes for table `images`
 --
-ALTER TABLE `image`
+ALTER TABLE `images`
  ADD PRIMARY KEY (`id`), ADD KEY `subject_id` (`subject_id`);
 
 --
--- Indexes for table `post`
+-- Indexes for table `posts`
 --
-ALTER TABLE `post`
+ALTER TABLE `posts`
  ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `profile`
+-- Indexes for table `profiles`
 --
-ALTER TABLE `profile`
+ALTER TABLE `profiles`
  ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `user`
+-- Indexes for table `schema_migrations`
 --
-ALTER TABLE `user`
+ALTER TABLE `schema_migrations`
+ ADD UNIQUE KEY `unique_schema_migrations` (`version`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
  ADD PRIMARY KEY (`id`);
 
 --
@@ -130,50 +153,51 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT for table `comment`
+-- AUTO_INCREMENT for table `comments`
 --
-ALTER TABLE `comment`
+ALTER TABLE `comments`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `image`
+-- AUTO_INCREMENT for table `images`
 --
-ALTER TABLE `image`
+ALTER TABLE `images`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `post`
+-- AUTO_INCREMENT for table `posts`
 --
-ALTER TABLE `post`
+ALTER TABLE `posts`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `profile`
+-- AUTO_INCREMENT for table `profiles`
 --
-ALTER TABLE `profile`
+ALTER TABLE `profiles`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT for table `users`
 --
-ALTER TABLE `user`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `users`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=26;
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `comment`
+-- Constraints for table `comments`
 --
-ALTER TABLE `comment`
-ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`);
+ALTER TABLE `comments`
+ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`);
 
 --
--- Constraints for table `post`
+-- Constraints for table `posts`
 --
-ALTER TABLE `post`
-ADD CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+ALTER TABLE `posts`
+ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
--- Constraints for table `profile`
+-- Constraints for table `profiles`
 --
-ALTER TABLE `profile`
-ADD CONSTRAINT `profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+ALTER TABLE `profiles`
+ADD CONSTRAINT `profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
 
