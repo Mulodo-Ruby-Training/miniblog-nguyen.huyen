@@ -31,9 +31,12 @@ gem 'factory_girl'
 group :test do
   gem 'faker'
   gem 'capybara'
+  gem 'factory_girl_json'
   gem 'guard-rspec'
   gem 'launchy'
 end
+gem 'database_cleaner'
+gem 'bcrypt', '~> 3.1.7'
 gem 'annotate' # bundle exec annotate command writes schema difinition to models
 
 # Use ActiveModel has_secure_password

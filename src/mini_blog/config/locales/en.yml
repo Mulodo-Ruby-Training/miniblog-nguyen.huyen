@@ -21,5 +21,17 @@
 
 en:
   missing_param: "Param missing: %{param}"
-  invalid_param : "Param invalid: %{param}"
+  invalid_param: "Param invalid: %{param}"
   database_error: "Database error was occurred"
+  create_user_success: "Account was created successfully !"
+  existing_token: "Existing of session token"
+  login_success: "Login success!"
+  logout_success: "Logout success!"
+  not_login: "Not login"
+  change_password_success: "Password was updated successfully"
+  update_user_info_success: "Information of user was updated successfully"
+  get_user_info_success: "Get information of user successfully"
+  search_success: "Search user OK"
+
+
+

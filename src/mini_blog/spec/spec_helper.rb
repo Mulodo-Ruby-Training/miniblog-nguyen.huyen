@@ -15,10 +15,16 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require "capybara/rspec"
+require 'factory_girl_rails'
+require 'rails'
+require 'database_cleaner'
 RSpec.configure do |config|
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
-  # assertions if you prefer.
+  config.include FactoryGirl::Syntax::Methods
+
+# assertions if you prefer.
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods
@@ -87,4 +93,33 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+  #config.use_transactional_fixtures = false
+
+  config.before(:suite) do
+    # Do truncation once per suite to vacuum for Postgres
+    DatabaseCleaner.clean_with :truncation
+    # Normally do transactions-based cleanup
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.around(:each) do |spec|
+    if spec.metadata[:js] || spec.metadata[:test_commit]
+      # JS => run with PhantomJS that doesn't share connections => can't use transactions
+      # deletion is often faster than truncation on Postgres - doesn't vacuum
+      # no need to 'start', clean_with is sufficient for deletion
+      # Devise Emails: devise-async sends confirmation on commit only! => can't use transactions
+      spec.run
+      DatabaseCleaner.clean_with :deletion
+    else
+      # No JS/Devise => run with Rack::Test => transactions are ok
+      DatabaseCleaner.start
+      spec.run
+      DatabaseCleaner.clean
+      # see https://github.com/bmabey/database_cleaner/issues/99
+      begin
+        ActiveRecord::Base.connection.send(:rollback_transaction_records, true)
+      rescue
+      end
+    end
+  end
 end

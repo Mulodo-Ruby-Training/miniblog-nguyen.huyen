@@ -13,7 +13,6 @@ test:
   database: mini_blog
   pool: 5
   username: root
-  password:
-  socket: /tmp/mysql.sock
+  password: ''
 
 

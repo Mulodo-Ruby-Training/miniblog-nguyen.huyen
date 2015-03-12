@@ -54,8 +54,8 @@ ActiveRecord::Schema.define(version: 20150227014635) do
     t.string   "first_name",  limit: 60,              null: false
     t.string   "last_name",   limit: 60,              null: false
     t.integer  "gender",      limit: 1,   default: 1, null: false
-    t.string   "address",     limit: 250,             null: false
-    t.datetime "birth_day",                           null: false
+    t.string   "address",     limit: 250
+    t.datetime "birth_day"
     t.string   "email",       limit: 60,              null: false
     t.string   "phone",       limit: 20,              null: false
     t.datetime "created_at",                          null: false
@@ -65,11 +65,13 @@ ActiveRecord::Schema.define(version: 20150227014635) do
   add_index "profiles", ["user_id"], name: "user_id", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "type",        limit: 20, default: "normal", null: false
-    t.string   "username",    limit: 30,                    null: false
-    t.string   "password",    limit: 30,                    null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "modified_at",                               null: false
+    t.string   "user_type",     limit: 20,  default: "normal", null: false
+    t.string   "username",      limit: 30,                     null: false
+    t.string   "salt_password", limit: 200,                    null: false
+    t.string   "password",      limit: 200,                    null: false
+    t.string   "token",         limit: 200
+    t.datetime "created_at",                                   null: false
+    t.datetime "modified_at",                                  null: false
   end
 
 end
