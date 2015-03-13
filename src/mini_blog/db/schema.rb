@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20150227014635) do
     t.datetime "modified_at",                         null: false
   end
 
+  add_index "profiles", ["first_name", "last_name"], name: "first_name", type: :fulltext
   add_index "profiles", ["user_id"], name: "user_id", using: :btree
 
   create_table "users", force: true do |t|
@@ -73,5 +74,7 @@ ActiveRecord::Schema.define(version: 20150227014635) do
     t.datetime "created_at",                                   null: false
     t.datetime "modified_at",                                  null: false
   end
+
+  add_index "users", ["username"], name: "username", type: :fulltext
 
 end

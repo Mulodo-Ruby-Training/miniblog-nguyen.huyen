@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `profiles` (
   `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `token` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Indexes for dumped tables
@@ -136,7 +136,7 @@ ALTER TABLE `posts`
 -- Indexes for table `profiles`
 --
 ALTER TABLE `profiles`
- ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`) USING BTREE;
+ ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`) USING BTREE, ADD FULLTEXT KEY `first_name` (`first_name`,`last_name`);
 
 --
 -- Indexes for table `schema_migrations`
@@ -148,7 +148,7 @@ ALTER TABLE `schema_migrations`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
- ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`), ADD FULLTEXT KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -173,11 +173,9 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `profiles`
 --
 ALTER TABLE `profiles`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
-
-
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;

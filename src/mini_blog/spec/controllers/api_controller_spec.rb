@@ -194,13 +194,13 @@ RSpec.describe ApiController, :type => :controller do
   describe "GET search_user" do
     context "get list search user" do
       it "show search result " do
-        post :create_user, FactoryGirl.attributes_for(:param_user,username:"username01", password: "123456")
-        post :create_user, FactoryGirl.attributes_for(:param_user,username:"abc", password: "123456")
-        post :login, {username: "abc", password: "123456"}
-        post :update_user_info, FactoryGirl.attributes_for(:user_info, first_name: "name")
-        get :search_user, {keyword: "na"}
-        #JSON.parse(response.body)["meta"]["status"].should eq(200)
-        #expect(JSON.parse(response.body)).to eq("username01@domain.com")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "username" ,password: "123456")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "abcdef" ,password: "123456")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyztmn" ,password: "123456")
+
+        get :search_user, keyword: "username"
+        JSON.parse(response.body)["meta"]["status"].should eq(200)
+        expect(JSON.parse(response.body)).to eq(200)
       end
     end
   end

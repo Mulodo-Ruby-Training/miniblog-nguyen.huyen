@@ -16,6 +16,7 @@ require "bcrypt"
 require 'digest/md5'
 class User < ActiveRecord::Base
   include BCrypt
+
   #------------------------------- begin associations ------------------------------#
   has_one :profile
   #------------------------------- begin validations -------------------------------#
@@ -58,31 +59,39 @@ class User < ActiveRecord::Base
   end
   #------------------------------- begin named scopes ------------------------------#
   scope :search, lambda { | keyword = nil, page = nil, limit = nil, order = nil|
-     users = User.joins("left join profiles on profile.id = users.id")
+     users = User.joins("left join profiles on profiles.user_id = users.id")
      # search by keyword
      if keyword && keyword.strip.length > 0
-       users = users.where("MATCH(username,first_name,last_name) AGAINST ("+ keyword +")")
+       #keyword = keyword + "*"
+       #users = users.where("username LIKE ?",keyword)
+       users =users.where("MATCH(username) AGAINST (? IN BOOLEAN MODE) OR
+       MATCH(first_name,last_name) AGAINST (? IN BOOLEAN MODE)", keyword , keyword)
+       #users = User.find(:all, :conditions => ("match(first_name) against (? IN BOOLEAN MODE)",keyword))
+
      end
-     #total = users.count
+     total = users.count
      # select page, limit
      if page
-       users = users.order(order => :desc).page(page).per(limit)
+       #users = users.order(id: :desc).page(page).per(limit)
      end
      # get info
      hash = []
-     User.all.to_a.each do | user |
-       profile = Profile.find_by(user_id: user.id)
+     avatar = nil
+     users.each do | user |
        image = Image.find_by(subject_type: "avatar", subject_id: profile.id)
+       avatar = image.url unless image.nil?
        info = {
-           :user_id => user.id,
-           :username => user.username,
-           :user_type => user.user_type,
-           :avatar => image.url,
-           :created_at => user.created_at
+           user_id: keyword,
+           username: user.username,
+           user_type: user.user_type,
+           first_name: user.first_name,
+           last_name: user.last_name,
+           avatar: avatar,
+           created_at: user.created_at
        }
        hash << info
      end
-     hash = {:list => hash}
+     hash = {:list => hash, :total => total}
 
      return hash
    }
