@@ -201,13 +201,13 @@ RSpec.describe ApiController, :type => :controller do
       it "show search result " do
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "username" ,password: "123456")
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "abcdef" ,password: "123456")
-        post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyzabc" ,password: "123456")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyz abc" ,password: "123456")
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "username1" ,password: "123456")
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "abcdef1" ,password: "123456")
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyztmn1" ,password: "123456")
-        get :search_user, keyword: "xyzabc"
+        get :search_user, keyword: "xyz"
         JSON.parse(response.body)["meta"]["status"].should eq(200)
-        expect(JSON.parse(response.body)["data"]["list"][0]["username"]).to eq("xyzabc")
+        expect(JSON.parse(response.body)["data"]["list"][0]["username"]).to eq("xyz abc")
       end
     end
   end

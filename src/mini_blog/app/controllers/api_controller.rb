@@ -178,7 +178,7 @@ class ApiController < ApplicationController
   def search_user
     hash = {}
     limit = 20
-    page = params[:page].to_i > 0 ? params[:page].to_i.abs : 1
+    page = params[:page].to_i > 0 ? params[:page].to_i.abs : 0
     begin
       hash = User.search(params[:keyword],page,limit)
       render_success(hash, t('search_success'))

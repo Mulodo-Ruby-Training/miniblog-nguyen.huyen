@@ -62,12 +62,13 @@ class User < ActiveRecord::Base
      users = User.joins("left join profiles on profiles.user_id = users.id")
      # search by keyword
      if keyword && keyword.strip.length > 0
-       users =users.where("MATCH (username) AGAINST (? IN NATURAL LANGUAGE MODE )", (keyword))
+       users =users.where("MATCH (username) AGAINST (? IN NATURAL LANGUAGE MODE ) OR
+       MATCH (first_name, last_name) AGAINST (? IN NATURAL LANGUAGE MODE ) ", (keyword + '*'),( keyword + '*'))
      end
      total = users.count
      # select page, limit
      if page
-       #users = users.order(id: :desc)
+       users = users.order(id: :desc).limit(limit).offset(page * limit)
      end
      # get info
      hash = []
