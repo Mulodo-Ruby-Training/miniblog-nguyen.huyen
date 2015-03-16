@@ -16,7 +16,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require "capybara/rspec"
 require 'factory_girl_rails'
-require 'rails'
+require 'rails_helper'
 require 'database_cleaner'
 RSpec.configure do |config|
 
@@ -99,7 +99,7 @@ RSpec.configure do |config|
     # Do truncation once per suite to vacuum for Postgres
     DatabaseCleaner.clean_with :truncation
     # Normally do transactions-based cleanup
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :deletion
   end
 
   config.around(:each) do |spec|

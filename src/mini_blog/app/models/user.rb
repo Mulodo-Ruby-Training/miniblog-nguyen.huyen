@@ -44,13 +44,13 @@ class User < ActiveRecord::Base
   end
   def build_profile
     profile = Profile.new(
-      user_id: self.id,
-      first_name: self.username,
-      last_name: self.username,
-      email: self.username + "@domain.com",
-      phone: "username_phone",
-      created_at: Time.now,
-      modified_at: Time.now
+        user_id: self.id,
+        first_name: self.username,
+        last_name: self.username,
+        email: self.username + "@domain.com",
+        phone: "username_phone",
+        created_at: Time.now,
+        modified_at: Time.now
     )
     profile.save!
   end
@@ -62,32 +62,21 @@ class User < ActiveRecord::Base
      users = User.joins("left join profiles on profiles.user_id = users.id")
      # search by keyword
      if keyword && keyword.strip.length > 0
-       #keyword = keyword + "*"
-       #users = users.where("username LIKE ?",keyword)
-       users =users.where("MATCH(username) AGAINST (? IN BOOLEAN MODE) OR
-       MATCH(first_name,last_name) AGAINST (? IN BOOLEAN MODE)", keyword , keyword)
-       #users = User.find(:all, :conditions => ("match(first_name) against (? IN BOOLEAN MODE)",keyword))
-
+       users =users.where("MATCH (username) AGAINST (? IN NATURAL LANGUAGE MODE )", (keyword))
      end
      total = users.count
      # select page, limit
      if page
-       #users = users.order(id: :desc).page(page).per(limit)
+       #users = users.order(id: :desc)
      end
      # get info
      hash = []
      avatar = nil
      users.each do | user |
-       image = Image.find_by(subject_type: "avatar", subject_id: profile.id)
-       avatar = image.url unless image.nil?
        info = {
-           user_id: keyword,
+           user_id: user.id,
            username: user.username,
            user_type: user.user_type,
-           first_name: user.first_name,
-           last_name: user.last_name,
-           avatar: avatar,
-           created_at: user.created_at
        }
        hash << info
      end

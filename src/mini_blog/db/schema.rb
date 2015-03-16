@@ -21,11 +21,6 @@ ActiveRecord::Schema.define(version: 20150227014635) do
     t.datetime "modified_at", null: false
   end
 
-  add_index "comments", ["post_id"], name: "post_id", using: :btree
-  add_index "comments", ["user_id"], name: "user_id", using: :btree
-  add_index "comments", ["user_id"], name: "user_id_2", using: :btree
-  add_index "comments", ["user_id"], name: "user_id_3", using: :btree
-
   create_table "images", force: true do |t|
     t.integer  "subject_id",               null: false
     t.string   "subject_type", limit: 60,  null: false
@@ -34,8 +29,6 @@ ActiveRecord::Schema.define(version: 20150227014635) do
     t.datetime "created_at",               null: false
     t.datetime "modified_at",              null: false
   end
-
-  add_index "images", ["subject_id"], name: "subject_id", using: :btree
 
   create_table "posts", force: true do |t|
     t.integer  "user_id",                                          null: false
@@ -46,8 +39,6 @@ ActiveRecord::Schema.define(version: 20150227014635) do
     t.datetime "created_at",                                       null: false
     t.datetime "modified_at",                                      null: false
   end
-
-  add_index "posts", ["user_id"], name: "user_id", using: :btree
 
   create_table "profiles", force: true do |t|
     t.integer  "user_id",                             null: false
@@ -63,7 +54,6 @@ ActiveRecord::Schema.define(version: 20150227014635) do
   end
 
   add_index "profiles", ["first_name", "last_name"], name: "first_name", type: :fulltext
-  add_index "profiles", ["user_id"], name: "user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "user_type",     limit: 20,  default: "normal", null: false
@@ -76,5 +66,6 @@ ActiveRecord::Schema.define(version: 20150227014635) do
   end
 
   add_index "users", ["username"], name: "username", type: :fulltext
+  add_index "users", ["username"], name: "username_2", type: :fulltext
 
 end

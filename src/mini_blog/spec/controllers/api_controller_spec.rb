@@ -5,30 +5,35 @@ RSpec.describe ApiController, :type => :controller do
   describe "POST create_user" do
     context "with valid attributes" do
       it "create new user account" do
-        post :create_user, FactoryGirl.attributes_for(:param_user)
+        @user =  FactoryGirl.attributes_for(:param_user)
+        post :create_user,@user
         Profile.count.should eq(1)
         User.count.should eq(1)
       end
       it 'responds with status: 200' do
-        post :create_user, FactoryGirl.attributes_for(:param_user)
+        @user =  FactoryGirl.attributes_for(:param_user)
+        post :create_user, @user
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
       end
     end
     context "with invalid attributes" do
       it "failed with status 101 if missing param username " do
-        post :create_user, FactoryGirl.attributes_for(:param_user, username: nil )
+        @user = FactoryGirl.attributes_for(:param_user, username: nil )
+        post :create_user,@user
         User.count.should eq(0)
         Profile.count.should eq(0)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
       end
       it "failed with status 101 if missing param user_type " do
-        post :create_user, FactoryGirl.attributes_for(:param_user, user_type: nil )
+        @user = FactoryGirl.attributes_for(:param_user, user_type: nil )
+        post :create_user, @user
         User.count.should eq(0)
         Profile.count.should eq(0)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
       end
       it "failed with status 101 if missing param password " do
-        post :create_user, FactoryGirl.attributes_for(:param_user, password: nil )
+        @user =  FactoryGirl.attributes_for(:param_user, password: nil )
+        post :create_user, @user
         User.count.should eq(0)
         Profile.count.should eq(0)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
@@ -196,11 +201,13 @@ RSpec.describe ApiController, :type => :controller do
       it "show search result " do
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "username" ,password: "123456")
         post :create_user, FactoryGirl.attributes_for(:param_user,username: "abcdef" ,password: "123456")
-        post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyztmn" ,password: "123456")
-
-        get :search_user, keyword: "username"
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyzabc" ,password: "123456")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "username1" ,password: "123456")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "abcdef1" ,password: "123456")
+        post :create_user, FactoryGirl.attributes_for(:param_user,username: "xyztmn1" ,password: "123456")
+        get :search_user, keyword: "xyzabc"
         JSON.parse(response.body)["meta"]["status"].should eq(200)
-        expect(JSON.parse(response.body)).to eq(200)
+        expect(JSON.parse(response.body)["data"]["list"][0]["username"]).to eq("xyzabc")
       end
     end
   end

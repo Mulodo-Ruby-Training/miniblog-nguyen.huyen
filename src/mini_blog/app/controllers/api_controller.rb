@@ -16,7 +16,7 @@ class ApiController < ApplicationController
     render_failed(102,t('invalid_param',:param => 'username')) and return unless user.nil?
     render_failed(102,t('invalid_param',:param => 'retype_password')) and return if params[:retype_password] != params[:password]
     begin
-      User.transaction do
+
       user = User.new(
           username: params[:username],
           user_type: params[:user_type],
@@ -27,7 +27,7 @@ class ApiController < ApplicationController
       user.save!
       user.build_profile
       render_success(user, t('create_user_success'))
-      end
+
     rescue
       render_failed(202, t('database_error'))
     end
@@ -76,15 +76,13 @@ class ApiController < ApplicationController
     render_failed(101, t('missing_param', {:param =>'new_password'})) and return if params[:new_password].nil?
     render_failed(102,t('invalid_param',:param => 'current_password')) and return unless user.check_password(params[:current_password])
     begin
-      User.transaction do
-        user.create_password(params[:new_password])
-        user.modified_at = Time.now
-        user.save!
-        hash = {:user_id => user.id,
-                :password => user.password
-          }
-        render_success(hash, t('change_password_success'))
-      end
+      user.create_password(params[:new_password])
+      user.modified_at = Time.now
+      user.save!
+      hash = {:user_id => user.id,
+              :password => user.password
+        }
+      render_success(hash, t('change_password_success'))
     rescue
       render_failed(202, t('database_error'))
     end
@@ -100,41 +98,40 @@ class ApiController < ApplicationController
     render_failed(102,t('invalid_param',:param => 'user_id')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
     begin
-      User.transaction do
-        user.update!(modified_at: Time.now)
-        profile = Profile.find_by(user_id: user.id)
-        profile.first_name = params[:first_name] unless params[:first_name].nil?
-        profile.last_name = params[:last_name] unless params[:last_name].nil?
-        profile.email = params[:email] unless params[:email].nil?
-        profile.phone = params[:phone] unless params[:phone].nil?
-        profile.modified_at = Time.now
-        profile.save!
-        user.save!
-        image = Image.find_by(subject_type: "avatar", subject_id: profile.id)
-        if !image.nil?
-          image.url = params[:avatar] unless params[:avatar].nil?
-          image.modified_at = Time.now
-          image.save!
-        elsif !params[:avatar].nil?
-          image  = Image.new(
-              subject_id: profile.id,
-              subject_type: "avatar",
-              name: "avatar_"+user.username,
-              url: params[:avatar],
-              created_at: Time.now,
-              modified_at: Time.now
-          )
-          image.save!
-        end
-        hash = {
-            :user_id => user.id,
-            :first_name => profile.first_name,
-            :last_name => profile.last_name,
-            :email => profile.email,
-            :avatar => image.url
-        }
-        render_success(hash, t('update_user_info_success'))
+      user.update!(modified_at: Time.now)
+      profile = Profile.find_by(user_id: user.id)
+      profile.first_name = params[:first_name] unless params[:first_name].nil?
+      profile.last_name = params[:last_name] unless params[:last_name].nil?
+      profile.email = params[:email] unless params[:email].nil?
+      profile.phone = params[:phone] unless params[:phone].nil?
+      profile.modified_at = Time.now
+      profile.save!
+      user.save!
+      image = Image.find_by(subject_type: "avatar", subject_id: profile.id)
+      if !image.nil?
+        image.url = params[:avatar] unless params[:avatar].nil?
+        image.modified_at = Time.now
+        image.save!
+      elsif !params[:avatar].nil?
+        image  = Image.new(
+            subject_id: profile.id,
+            subject_type: "avatar",
+            name: "avatar_"+user.username,
+            url: params[:avatar],
+            created_at: Time.now,
+            modified_at: Time.now
+        )
+        image.save!
       end
+      hash = {
+          :user_id => user.id,
+          :first_name => profile.first_name,
+          :last_name => profile.last_name,
+          :email => profile.email,
+          :avatar => image.url
+      }
+      render_success(hash, t('update_user_info_success'))
+
     rescue
       render_failed(202, t('database_error'))
     end
