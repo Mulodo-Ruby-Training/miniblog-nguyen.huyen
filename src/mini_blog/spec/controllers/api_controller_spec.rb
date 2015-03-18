@@ -212,11 +212,17 @@ RSpec.describe ApiController, :type => :controller do
     end
   end
   #=================================================================================
+=begin
   describe "POST create_post" do
     context "with valid attributes" do
       it "create new post" do
-
+        FactoryGirl.create(:user, username: "username01", password: "123456")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,FactoryGirl.attributes_for(:params_post, token: session[:token])
+        #Post.count.should eq(1)
+        expect(JSON.parse(response.body)).to eq(200)
+      end
       end
     end
-  end
+=end
 end

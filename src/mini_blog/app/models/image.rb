@@ -12,4 +12,7 @@
 #
 
 class Image < ActiveRecord::Base
+  #------------------------------- begin associations ------------------------------#
+  belongs_to :profile
+  belongs_to :post
 end

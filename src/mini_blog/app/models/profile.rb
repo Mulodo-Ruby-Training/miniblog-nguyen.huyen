@@ -18,7 +18,10 @@
 class Profile < ActiveRecord::Base
   #------------------------------- begin associations ------------------------------#
   belongs_to :user
+  has_many :image
   #------------------------------- begin validations -------------------------------#
-  validates :email, uniqueness: true, presence: true
+  validates :email, presence: true, uniqueness: true, length: 8..50, format: { with: /\A[a-z0-9\.]+@([a-z]{1,10}\.){1,2}[a-z]{2,4}\z/i,message: "Invalid Email"}
+  validates :first_name, presence: true, length: 6..250
+  validates :last_name, presence: true, length: 6..250
 
 end
