@@ -17,5 +17,7 @@ Rails.application.routes.draw do
     post 'create_comment'
     post 'update_comment'
     post 'delete_comment'
+    get 'get_all_comments_for_post'
+    get 'get_all_comments_for_user'
   end
 end

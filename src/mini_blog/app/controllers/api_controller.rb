@@ -190,4 +190,4 @@ class ApiController < ApplicationController
       render_failed(202, t('database_error'))
     end
   end
-  end
+ end

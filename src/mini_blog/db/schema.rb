@@ -40,8 +40,6 @@ ActiveRecord::Schema.define(version: 1) do
     t.datetime "modified_at",                                      null: false
   end
 
-  add_index "posts", ["content"], name: "content", type: :fulltext
-  add_index "posts", ["title", "content", "short_description"], name: "title_2", type: :fulltext
   add_index "posts", ["title", "short_description", "content"], name: "title", type: :fulltext
 
   create_table "profiles", force: true do |t|
@@ -70,6 +68,6 @@ ActiveRecord::Schema.define(version: 1) do
   end
 
   add_index "users", ["username"], name: "username", type: :fulltext
-  add_index "users", ["username"], name: "username_2", type: :fulltext
+
 
 end
