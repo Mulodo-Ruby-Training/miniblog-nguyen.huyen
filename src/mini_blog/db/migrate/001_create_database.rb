@@ -26,7 +26,7 @@ class CreateDatabase < ActiveRecord::Migration
       t.datetime "created_at",                                       null: false
       t.datetime "modified_at",                                      null: false
     end
-
+    add_index "posts", ["title", "short_description","content"], name: "title", type: :fulltext
     create_table "profiles", force: true do |t|
       t.integer  "user_id",                             null: false
       t.string   "first_name",  limit: 60,              null: false

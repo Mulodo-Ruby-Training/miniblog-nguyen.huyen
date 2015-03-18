@@ -20,4 +20,5 @@ class Profile < ActiveRecord::Base
   belongs_to :user
   #------------------------------- begin validations -------------------------------#
   validates :email, uniqueness: true, presence: true
+
 end

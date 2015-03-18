@@ -68,16 +68,23 @@ class User < ActiveRecord::Base
      total = users.count
      # select page, limit
      if page
-       users = users.order(id: :desc).limit(limit).offset(page * limit)
+       users = users.order(order => :desc).page(page).per(limit)
      end
      # get info
      hash = []
-     avatar = nil
      users.each do | user |
+       avatar = nil
+       profile = Profile.find_by(user_id: user.id)
+       image = Image.find_by(subject_id: profile.id, subject_type: "avatar")
+       avatar = image.url unless image.nil?
        info = {
-           user_id: user.id,
-           username: user.username,
-           user_type: user.user_type,
+         user_id: user.id,
+         username: user.username,
+         user_type: user.user_type,
+         first_name: profile.first_name,
+         last_name: profile.last_name,
+         avatar: avatar,
+         create_at: user.created_at
        }
        hash << info
      end

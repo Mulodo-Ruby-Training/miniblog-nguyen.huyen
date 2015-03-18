@@ -31,7 +31,17 @@ en:
   change_password_success: "Password was updated successfully"
   update_user_info_success: "Information of user was updated successfully"
   get_user_info_success: "Get information of user successfully"
-  search_success: "Search user OK"
+  search_success: "Search OK"
+  create_post_success: "Post was created successfully !"
+  update_post_status_success: "Post's status was updated successfully"
+  update_post_success: "Post was updated successfully"
+  permission_denied: "Permission_denied"
+  delete_post_success: "Delete post success"
+  get_all_posts_success: "Get all post successfully"
+  get_all_posts_for_user_success: "Get all post for user successfully"
+  create_comment_success: "Comment was created successfully !"
+  update_comment_success: "Comment was updated successfully"
+  delete_comment_success: "Delete comment success"
 
 
 

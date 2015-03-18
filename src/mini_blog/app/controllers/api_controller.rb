@@ -57,6 +57,7 @@ class ApiController < ApplicationController
   def sign_out
     user = User.find_by(token: session[:token])
     session[:token] = nil
+    render_failed(102,t('invalid_param',:param => 'user')) and return if user.nil?
     user.token = nil
     user.save!
     hash = {token: user.token}
@@ -177,13 +178,16 @@ class ApiController < ApplicationController
   # ---------------------------------------
   def search_user
     hash = {}
-    limit = 20
-    page = params[:page].to_i > 0 ? params[:page].to_i.abs : 0
+    limit =20
+    limit = params[:limit] unless params[:limit].nil?
+    order = "id"
+    order = params[:order] unless params[:order].nil?
+    page = params[:page].to_i > 0 ? params[:page].to_i.abs : 1
     begin
-      hash = User.search(params[:keyword],page,limit)
+      hash = User.search(params[:keyword],page,limit,order)
       render_success(hash, t('search_success'))
     rescue
       render_failed(202, t('database_error'))
     end
   end
-end
+  end

@@ -40,6 +40,10 @@ ActiveRecord::Schema.define(version: 1) do
     t.datetime "modified_at",                                      null: false
   end
 
+  add_index "posts", ["content"], name: "content", type: :fulltext
+  add_index "posts", ["title", "content", "short_description"], name: "title_2", type: :fulltext
+  add_index "posts", ["title", "short_description", "content"], name: "title", type: :fulltext
+
   create_table "profiles", force: true do |t|
     t.integer  "user_id",                             null: false
     t.string   "first_name",  limit: 60,              null: false

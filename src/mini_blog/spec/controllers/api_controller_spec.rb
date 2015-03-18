@@ -211,4 +211,12 @@ RSpec.describe ApiController, :type => :controller do
       end
     end
   end
+  #=================================================================================
+  describe "POST create_post" do
+    context "with valid attributes" do
+      it "create new post" do
+
+      end
+    end
+  end
 end
