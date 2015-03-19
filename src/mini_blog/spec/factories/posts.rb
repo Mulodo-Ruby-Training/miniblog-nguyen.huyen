@@ -18,13 +18,14 @@ FactoryGirl.define do
     f.short_description "short description"
     f.content "content"
     f.user_id 1
+    f.status 1
   end
   factory :params_post, :class => "Post" do |f|
+    f.token "token"
     f.title "title"
     f.short_description "short description"
     f.content "content"
     f.user_id 1
-    f.token "token"
   end
 
 end

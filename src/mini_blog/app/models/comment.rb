@@ -11,6 +11,9 @@
 #
 
 class Comment < ActiveRecord::Base
+  #------------------------------- begin associations ------------------------------#
+  belongs_to :post
+  belongs_to :user
   #------------------------------- begin named scopes ------------------------------#
   scope :search, lambda { | keyword = nil, page = nil, limit = nil, order = nil, user_id = nil, post_id = nil|
      comments = self
@@ -19,7 +22,7 @@ class Comment < ActiveRecord::Base
        comments = comments.where("comments.user_id = ?",user_id)
      end
      if post_id
-       comments = comments.where("comments.user_id = ?",user_id)
+       comments = comments.where("comments.post_id = ?",post_id)
      end
      if keyword && keyword.strip.length > 0
        comments =comments.where("MATCH (content) AGAINST (? IN NATURAL LANGUAGE MODE )", (keyword + '*'))

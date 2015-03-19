@@ -212,17 +212,378 @@ RSpec.describe ApiController, :type => :controller do
     end
   end
   #=================================================================================
-=begin
   describe "POST create_post" do
     context "with valid attributes" do
       it "create new post" do
-        FactoryGirl.create(:user, username: "username01", password: "123456")
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", token: nil)
         post :login, {username: "username01", password: "123456"}
-        post :create_post,FactoryGirl.attributes_for(:params_post, token: session[:token])
-        #Post.count.should eq(1)
-        expect(JSON.parse(response.body)).to eq(200)
-      end
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        Post.count.should eq(1)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
       end
     end
-=end
+    context "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        post :create_post,FactoryGirl.attributes_for(:params_post, token: nil )
+        Post.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param title " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", token: nil)
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,FactoryGirl.attributes_for(:params_post, token: session[:token], title: nil )
+        Post.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param short_description " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", token: nil)
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,FactoryGirl.attributes_for(:params_post, token: session[:token], short_description: nil )
+        Post.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param content " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", token: nil)
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,FactoryGirl.attributes_for(:params_post, token: session[:token], content: nil )
+        Post.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+    end
+  end
+  #=======================================================================================
+  describe "POST change status of post" do
+    context "with valid attributes" do
+      it "change status of post" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :change_status_of_post,{token: session[:token], post_id: 1,status: 0 }
+        JSON.parse(response.body)["data"]["status"].should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+    context "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :change_status_of_post,{token: nil, post_id: 1,status: 0 }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param post_id " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :change_status_of_post,{token: session[:token], post_id: nil,status: 0 }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param status " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :change_status_of_post,{token: session[:token], post_id: 1,status: nil }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+    end
+  end
+  #=======================================================================================
+  describe "POST update post" do
+    context "with valid attributes" do
+      it "update post" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :update_post,{token: session[:token], post_id: 1,title: "new title" }
+        JSON.parse(response.body)["data"]["title"].should eq("new title")
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+    context "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :update_post,{token: nil, post_id: 1,title: "new title" }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param post_id " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :update_post,{token: session[:token], post_id: nil,title: "new title" }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 102 if permission denied " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username02", password: "123456")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :sign_out
+        post :login, {username: "username02", password: "123456"}
+        post :update_post,{token: session[:token], post_id: 1,title: "new title" }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(102)
+      end
+    end
+  end
+  #=========================================================================
+  describe "POST delete post" do
+    context "with valid attributes" do
+      it "delete post" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :delete_post,{token: session[:token], post_id: 1 }
+        Post.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+    context "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :delete_post,{token: nil, post_id: 1 }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param post_id " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :delete_post,{token: session[:token], post_id: nil }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 102 if permission denied " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username02", password: "123456")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :sign_out
+        post :login, {username: "username02", password: "123456"}
+        post :delete_post,{token: session[:token], post_id: 1 }
+        Post.count.should eq(1)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(102)
+      end
+    end
+  end
+  describe "GET get all posts" do
+    context "get all posts" do
+      it "show all posts" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_post,{token: session[:token], title: "title2", short_description: "short description",content: "content" }
+        get :get_all_posts
+        (JSON.parse(response.body)["data"]["total"]).should eq(2)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+  end
+  describe "GET get all posts for user" do
+    context "get all posts for user" do
+      it "show all posts for a user" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        user_id = JSON.parse(response.body)["data"]["id"]
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_post,{token: session[:token], title: "title2", short_description: "short description",content: "content" }
+        get :get_all_posts_for_user,{user_id: user_id}
+        (JSON.parse(response.body)["data"]["total"]).should eq(2)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+  end
+  #================================================================================================
+  describe "POST create comment" do
+    context "with valid attributes" do
+      it "create new comment" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        Comment.count.should eq(1)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+    context "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: nil, post_id: 1,content: "comment" }
+        Comment.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param post_id " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: nil,content: "comment" }
+        Comment.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param content " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: nil }
+        Comment.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+    end
+  end
+  #===========================================================================
+  describe "POST update comment" do
+    context "with valid attributes" do
+      it "update comment" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :update_comment,{token: session[:token],comment_id: 1, content: "new content comment" }
+        JSON.parse(response.body)["data"]["content"].should eq("new content comment")
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+    context "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :update_comment,{token: nil ,comment_id: 1, content: "new content comment" }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param comment_id " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :update_comment,{token: session[:token],comment_id: nil, content: "new content comment" }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 102 if permission denied " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username02", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token],post_id: 1,content: "comment" }
+        post :sign_out
+        post :login, {username: "username02", password: "123456"}
+        post :update_comment,{token: session[:token], comment_id: 1, content: "new content comment" }
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(102)
+      end
+    end
+  end
+  #===============================================================================
+  describe "POST delete comment" do
+    context  "with valid attributes" do
+      it "delete comment" do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :delete_comment,{token: session[:token],comment_id: 1 }
+        Comment.count.should eq(0)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+    context  "with invalid attributes" do
+      it "failed with status 101 if missing param token " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :delete_comment,{token: nil,comment_id: 1 }
+        Comment.count.should eq(1)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 101 if missing param comment_id " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :delete_comment,{token: session[:token],comment_id: nil }
+        Comment.count.should eq(1)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
+      end
+      it "failed with status 102 if permission denied " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username02", password: "123456", user_type: "normal")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post :sign_out
+        post :login, {username: "username02", password: "123456"}
+        post :delete_comment,{token: session[:token],comment_id: 1 }
+        Comment.count.should eq(1)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(102)
+      end
+    end
+  end
+  #=====================================================================================
+  describe "GET get all comments for a post" do
+    context  "with invalid attributes" do
+      it "show list comments of post " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment" }
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment2" }
+        post :get_all_comments_for_post,{post_id: post_id }
+        JSON.parse(response.body)["data"]["total"].should eq(2)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+  end
+  #=====================================================================================
+  describe "GET get all comments for a user" do
+    context  "with invalid attributes" do
+      it "show list comments of post " do
+        session[:token] = nil
+        post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
+        user_id = JSON.parse(response.body)["data"]["id"]
+        post :login, {username: "username01", password: "123456"}
+        post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment" }
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment2" }
+        post :get_all_comments_for_user,{user_id: user_id }
+        JSON.parse(response.body)["data"]["total"].should eq(2)
+        expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
+      end
+    end
+  end
 end

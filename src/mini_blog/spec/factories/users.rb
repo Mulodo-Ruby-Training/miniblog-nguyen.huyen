@@ -21,6 +21,7 @@ FactoryGirl.define do
     f.password  Faker::Internet.password
     f.modified_at Faker::Time.forward
     f.token nil
+    f.user_type "normal"
   end
   factory :param_user, :class => "User"  do |f|
     f.username "username01"

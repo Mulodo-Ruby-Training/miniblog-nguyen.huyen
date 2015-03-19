@@ -12,6 +12,7 @@
 #  modified_at       :datetime         not null
 #
 class Post < ActiveRecord::Base
+  has_many :image
   #------------------------------- begin named scopes ------------------------------#
   scope :search, lambda { | keyword = nil, page = nil, limit = nil, order = nil, user_id = nil|
      posts = self
