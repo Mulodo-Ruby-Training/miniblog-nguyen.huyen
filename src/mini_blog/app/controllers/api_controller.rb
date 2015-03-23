@@ -386,12 +386,10 @@ class ApiController < ApplicationController
     user = User.find_by(token: params[:token])
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
-    render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
-    render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
     render_failed(101, t('missing_param', {:param =>'comment_id'})) and return if params[:comment_id].nil?
+    comment = Comment.find_by(params[:comment_id])
+    render_failed(102, t('permission_denied')) and return if comment.user_id != user.id
     begin
-      comment = Comment.find_by(params[:comment_id])
       comment.content = params[:content] unless params[:content].nil?
       comment.modified_at = Time.now
       comment.save!
@@ -410,9 +408,6 @@ class ApiController < ApplicationController
     user = User.find_by(token: params[:token])
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
-    render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
-    render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
     render_failed(101, t('missing_param', {:param =>'comment_id'})) and return if params[:comment_id].nil?
     comment = Comment.find_by(params[:comment_id])
     render_failed(102, t('invalid_param',:param => 'comment_id')) and return if comment.nil?
@@ -439,7 +434,7 @@ class ApiController < ApplicationController
     order = params[:order] unless params[:order].nil?
     page = params[:page].to_i > 0 ? params[:page].to_i.abs : 1
     begin
-      comments = Comment.search("",page, limit, order, "", params[:post_id])
+      comments = Comment.search("",page, limit, order, nil, params[:post_id])
       render_success(comments, t('get_all_posts_for_user_success'))
     rescue
       render_failed(202, t('database_error'))
