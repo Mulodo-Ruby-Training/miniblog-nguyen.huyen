@@ -348,5 +348,123 @@ class ApiController < ApplicationController
       render_failed(202, t('database_error'))
     end
   end
+  # ---------------------------------------
+  # d: 15/03/18
+  # TODO: Create comment
+  # method: post
+  # ---------------------------------------
+  def create_comment
+    render_failed(101, t('missing_param', {:param =>'token'})) and return if params[:token].nil?
+    user = User.find_by(token: params[:token])
+    render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
+    render_failed(301, t('not_login')) and return unless user.signed_in?
+    render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
+    post = Post.find_by(params[:post_id])
+    render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
+    render_failed(101, t('missing_param', {:param =>'content'})) and return if params[:content].nil?
+    begin
+      comment = Comment.new(
+          user_id: user.id,
+          post_id: post.id,
+          content: params[:content],
+          created_at: Time.now,
+          modified_at: Time.now
+      )
+      comment.save!
+      render_success(comment, t('create_comment_success'))
+    rescue
+      render_failed(202, t('database_error'))
+    end
+  end
+  # ---------------------------------------
+  # d: 15/03/18
+  # TODO: Update comment
+  # method: post
+  # ---------------------------------------
+  def update_comment
+    render_failed(101, t('missing_param', {:param =>'token'})) and return if params[:token].nil?
+    user = User.find_by(token: params[:token])
+    render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
+    render_failed(301, t('not_login')) and return unless user.signed_in?
+    render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
+    post = Post.find_by(params[:post_id])
+    render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
+    render_failed(101, t('missing_param', {:param =>'comment_id'})) and return if params[:comment_id].nil?
+    begin
+      comment = Comment.find_by(params[:comment_id])
+      comment.content = params[:content] unless params[:content].nil?
+      comment.modified_at = Time.now
+      comment.save!
+      render_success(comment, t('update_comment_success'))
+    rescue
+      render_failed(202, t('database_error'))
+    end
+  end
+  # ---------------------------------------
+  # d: 15/03/18
+  # TODO: Delete comment
+  # method: post
+  # ---------------------------------------
+  def delete_comment
+    render_failed(101, t('missing_param', {:param =>'token'})) and return if params[:token].nil?
+    user = User.find_by(token: params[:token])
+    render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
+    render_failed(301, t('not_login')) and return unless user.signed_in?
+    render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
+    post = Post.find_by(params[:post_id])
+    render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
+    render_failed(101, t('missing_param', {:param =>'comment_id'})) and return if params[:comment_id].nil?
+    comment = Comment.find_by(params[:comment_id])
+    render_failed(102, t('invalid_param',:param => 'comment_id')) and return if comment.nil?
+    render_failed(102, t('permission_denied')) and return if (user.user_type != "admin" && comment.user_id != user.id)
+    begin
+      comment.destroy!
+      render_success(nil,t('delete_comment_success'))
+    rescue
+      render_failed(202, t('database_error'))
+    end
+  end
+  # ---------------------------------------
+  # d: 15/03/18
+  # TODO: Get all comments for a Post
+  # method: get
+  # ---------------------------------------
+  def get_all_comments_for_post
+    render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
+    post = Post.find_by(params[:post_id])
+    render_failed(102,t('invalid_param',:param => 'post_id')) and return if post.nil?
+    limit = 20
+    limit = params[:limit] unless params[:limit].nil?
+    order ="id"
+    order = params[:order] unless params[:order].nil?
+    page = params[:page].to_i > 0 ? params[:page].to_i.abs : 1
+    begin
+      comments = Comment.search("",page, limit, order, "", params[:post_id])
+      render_success(comments, t('get_all_posts_for_user_success'))
+    rescue
+      render_failed(202, t('database_error'))
+    end
+  end
+  # ---------------------------------------
+  # d: 15/03/18
+  # TODO: Get all comments for a User
+  # method: get
+  # ---------------------------------------
+  def get_all_comments_for_user
+    render_failed(101, t('missing_param', {:param =>'user_id'})) and return if params[:user_id].nil?
+    user = User.find_by(params[:user_id])
+    render_failed(102,t('invalid_param',:param => 'user_id')) and return if user.nil?
+    limit = 20
+    limit = params[:limit] unless params[:limit].nil?
+    order ="id"
+    order = params[:order] unless params[:order].nil?
+    page = params[:page].to_i > 0 ? params[:page].to_i.abs : 1
+    begin
+      comments = Comment.search("",page, limit, order, params[:user_id])
+      render_success(comments, t('get_all_posts_for_user_success'))
+    rescue
+      render_failed(202, t('database_error'))
+    end
+  end
 
 end
