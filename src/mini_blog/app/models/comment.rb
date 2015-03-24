@@ -38,6 +38,7 @@ class Comment < ActiveRecord::Base
        user = User.find_by(comment.user_id)
        post = Post.find_by(comment.post_id)
        info = {
+           comment_id: comment.id,
            user_id: comment.user_id,
            post_id: post.id,
            username: user.username,

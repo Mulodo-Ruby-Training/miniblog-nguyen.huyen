@@ -33,6 +33,7 @@ class Post < ActiveRecord::Base
      posts.each do | post |
        user = User.find_by(post.user_id)
        info = {
+           post_id: post.id,
            user_id: post.user_id,
            username: user.username,
            title: post.title,
