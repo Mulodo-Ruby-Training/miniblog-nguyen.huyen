@@ -244,7 +244,7 @@ class ApiController < ApplicationController
     render_failed(102, t('invalid_param',:param => 'token')) and return if (user.nil? || user.user_type != "admin")
     render_failed(301, t('not_login')) and return unless user.signed_in?
     render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
+    post = Post.find_by(id: params[:post_id])
     render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
     render_failed(101, t('missing_param', {:param =>'status'})) and return if params[:status].nil?
     begin
@@ -272,7 +272,7 @@ class ApiController < ApplicationController
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
     render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
+    post = Post.find_by(id: params[:post_id])
     render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
     render_failed(102, t('permission_denied')) and return unless post.user_id == user.id
     begin
@@ -297,7 +297,7 @@ class ApiController < ApplicationController
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
     render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
+    post = Post.find_by(id:params[:post_id])
     render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
     render_failed(102, t('permission_denied')) and return unless post.user_id == user.id
     begin
@@ -334,7 +334,7 @@ class ApiController < ApplicationController
   # ---------------------------------------
   def get_all_posts_for_user
     render_failed(101, t('missing_param', {:param =>'user_id'})) and return if params[:user_id].nil?
-    user = User.find_by(params[:user_id])
+    user = User.find_by(id: params[:user_id])
     render_failed(102,t('invalid_param',:param => 'user_id')) and return if user.nil?
     limit = 20
     limit = params[:limit] unless params[:limit].nil?
@@ -359,7 +359,7 @@ class ApiController < ApplicationController
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
     render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
+    post = Post.find_by(id: params[:post_id])
     render_failed(102, t('invalid_param',:param => 'post_id')) and return if post.nil?
     render_failed(101, t('missing_param', {:param =>'content'})) and return if params[:content].nil?
     begin
@@ -387,7 +387,7 @@ class ApiController < ApplicationController
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
     render_failed(101, t('missing_param', {:param =>'comment_id'})) and return if params[:comment_id].nil?
-    comment = Comment.find_by(params[:comment_id])
+    comment = Comment.find_by(id: params[:comment_id])
     render_failed(102, t('permission_denied')) and return if comment.user_id != user.id
     begin
       comment.content = params[:content] unless params[:content].nil?
@@ -409,7 +409,7 @@ class ApiController < ApplicationController
     render_failed(102, t('invalid_param',:param => 'token')) and return if user.nil?
     render_failed(301, t('not_login')) and return unless user.signed_in?
     render_failed(101, t('missing_param', {:param =>'comment_id'})) and return if params[:comment_id].nil?
-    comment = Comment.find_by(params[:comment_id])
+    comment = Comment.find_by(id: params[:comment_id])
     render_failed(102, t('invalid_param',:param => 'comment_id')) and return if comment.nil?
     render_failed(102, t('permission_denied')) and return if (user.user_type != "admin" && comment.user_id != user.id)
     begin
@@ -426,7 +426,7 @@ class ApiController < ApplicationController
   # ---------------------------------------
   def get_all_comments_for_post
     render_failed(101, t('missing_param', {:param =>'post_id'})) and return if params[:post_id].nil?
-    post = Post.find_by(params[:post_id])
+    post = Post.find_by(id: params[:post_id])
     render_failed(102,t('invalid_param',:param => 'post_id')) and return if post.nil?
     limit = 20
     limit = params[:limit] unless params[:limit].nil?
@@ -447,7 +447,7 @@ class ApiController < ApplicationController
   # ---------------------------------------
   def get_all_comments_for_user
     render_failed(101, t('missing_param', {:param =>'user_id'})) and return if params[:user_id].nil?
-    user = User.find_by(params[:user_id])
+    user = User.find_by(id: params[:user_id])
     render_failed(102,t('invalid_param',:param => 'user_id')) and return if user.nil?
     limit = 20
     limit = params[:limit] unless params[:limit].nil?
