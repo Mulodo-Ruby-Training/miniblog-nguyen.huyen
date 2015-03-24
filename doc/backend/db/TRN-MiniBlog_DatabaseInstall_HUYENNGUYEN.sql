@@ -11,169 +11,171 @@ SET NAMES utf8;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comment`
+-- Table structure for table `comments`
 --
 
-CREATE TABLE IF NOT EXISTS `comment` (
+CREATE TABLE IF NOT EXISTS `comments` (
 `id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `content` varchar(255) NOT NULL,
+  `content` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `image`
+-- Table structure for table `images`
 --
 
-CREATE TABLE IF NOT EXISTS `image` (
+CREATE TABLE IF NOT EXISTS `images` (
 `id` int(11) NOT NULL,
   `subject_id` int(11) NOT NULL,
-  `subject_type` varchar(60) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `url` varchar(100) NOT NULL,
+  `subject_type` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `url` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post`
+-- Table structure for table `posts`
 --
 
-CREATE TABLE IF NOT EXISTS `post` (
+CREATE TABLE IF NOT EXISTS `posts` (
 `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `title` varchar(250) NOT NULL,
-  `short_description` text NOT NULL,
-  `content` longtext NOT NULL,
-  `status` tinyint(2) NOT NULL DEFAULT '1',
+  `title` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
+  `short_description` text COLLATE utf8_unicode_ci NOT NULL,
+  `content` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT '1',
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `profile`
+-- Table structure for table `profiles`
 --
 
-CREATE TABLE IF NOT EXISTS `profile` (
+CREATE TABLE IF NOT EXISTS `profiles` (
 `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `first_name` varchar(60) NOT NULL,
-  `last_name` varchar(60) NOT NULL,
-  `gender` tinyint(2) NOT NULL DEFAULT '1',
-  `address` varchar(250) NOT NULL,
-  `birth_day` datetime NOT NULL,
-  `email` varchar(60) NOT NULL,
-  `phone` varchar(20) NOT NULL,
+  `first_name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `last_name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `gender` tinyint(4) NOT NULL DEFAULT '1',
+  `address` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `birth_day` datetime DEFAULT NULL,
+  `email` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Table structure for table `schema_migrations`
 --
 
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `schema_migrations` (
+  `version` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `schema_migrations`
+--
+
+INSERT INTO `schema_migrations` (`version`) VALUES
+('20150227014635');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
 `id` int(11) NOT NULL,
-  `type` varchar(20) NOT NULL DEFAULT 'nomal',
-  `username` varchar(30) NOT NULL,
-  `password` varchar(30) NOT NULL,
+  `user_type` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'normal',
+  `username` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `salt_password` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `modified_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `comment`
+-- Indexes for table `comments`
 --
-ALTER TABLE `comment`
- ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`), ADD KEY `user_id_2` (`user_id`), ADD KEY `post_id` (`post_id`), ADD KEY `user_id_3` (`user_id`);
+ALTER TABLE `comments`
+ ADD PRIMARY KEY (`id`), ADD KEY `post_id` (`post_id`) USING BTREE, ADD KEY `user_id` (`user_id`) USING BTREE, ADD KEY `user_id_2` (`user_id`) USING BTREE, ADD KEY `user_id_3` (`user_id`) USING BTREE;
 
 --
--- Indexes for table `image`
+-- Indexes for table `images`
 --
-ALTER TABLE `image`
- ADD PRIMARY KEY (`id`), ADD KEY `subject_id` (`subject_id`);
+ALTER TABLE `images`
+ ADD PRIMARY KEY (`id`), ADD KEY `subject_id` (`subject_id`) USING BTREE;
 
 --
--- Indexes for table `post`
+-- Indexes for table `posts`
 --
-ALTER TABLE `post`
- ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);
+ALTER TABLE `posts`
+ ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`) USING BTREE;
 
 --
--- Indexes for table `profile`
+-- Indexes for table `profiles`
 --
-ALTER TABLE `profile`
- ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);
+ALTER TABLE `profiles`
+ ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`) USING BTREE, ADD FULLTEXT KEY `first_name` (`first_name`,`last_name`);
 
 --
--- Indexes for table `user`
+-- Indexes for table `schema_migrations`
 --
-ALTER TABLE `user`
- ADD PRIMARY KEY (`id`);
+ALTER TABLE `schema_migrations`
+ ADD UNIQUE KEY `unique_schema_migrations` (`version`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+ ADD PRIMARY KEY (`id`), ADD FULLTEXT KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `comment`
+-- AUTO_INCREMENT for table `comments`
 --
-ALTER TABLE `comment`
+ALTER TABLE `comments`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `image`
+-- AUTO_INCREMENT for table `images`
 --
-ALTER TABLE `image`
+ALTER TABLE `images`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `posts`
+--
+ALTER TABLE `posts`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `post`
+-- AUTO_INCREMENT for table `profiles`
 --
-ALTER TABLE `post`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `profiles`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 --
--- AUTO_INCREMENT for table `profile`
+-- AUTO_INCREMENT for table `users`
 --
-ALTER TABLE `profile`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `user`
---
-ALTER TABLE `user`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `comment`
---
-ALTER TABLE `comment`
-ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`);
-
---
--- Constraints for table `post`
---
-ALTER TABLE `post`
-ADD CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
-
---
--- Constraints for table `profile`
---
-ALTER TABLE `profile`
-ADD CONSTRAINT `profile_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
-
+ALTER TABLE `users`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;

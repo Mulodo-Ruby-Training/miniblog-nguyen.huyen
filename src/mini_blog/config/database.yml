@@ -1,0 +1,18 @@
+development:
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: root
+  password: ''
+  host: localhost
+  database: mini_blog
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: mini_blog
+  pool: 5
+  username: root
+  password: ''
+
+
