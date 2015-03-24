@@ -43,7 +43,7 @@ class Comment < ActiveRecord::Base
            post_id: post.id,
            username: user.username,
            comment_id: comment.id,
-           post_title: post.title,
+           content: comment.content
        }
        hash << info
      end
