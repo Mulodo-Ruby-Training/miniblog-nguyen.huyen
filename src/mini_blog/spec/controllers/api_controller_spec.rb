@@ -110,8 +110,9 @@ RSpec.describe ApiController, :type => :controller do
     context "with valid attributes" do
       it "Update user's password" do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456")
+        user_id = post_id = JSON.parse(response.body)["data"]["id"]
         post :login, {username: "username01", password: "123456"}
-        post :change_password, {user_id: 1, current_password: "123456", new_password: "newpass"}
+        post :change_password, {user_id: user_id, current_password: "123456", new_password: "newpass"}
         post :sign_out
         post :login, {username: "username01", password: "newpass"}
         JSON.parse(response.body)["meta"]["status"].should eq(200)
@@ -182,7 +183,8 @@ RSpec.describe ApiController, :type => :controller do
     context "with valid user_id" do
       it "get user's info" do
         post :create_user, FactoryGirl.attributes_for(:param_user, password: "123456")
-        get :get_user_info, {user_id: 1}
+        user_id = JSON.parse(response.body)["data"]["id"]
+        get :get_user_info, {user_id: user_id}
         JSON.parse(response.body)["meta"]["status"].should eq(200)
         expect(JSON.parse(response.body)["data"]["email"]).to eq("username01@domain.com")
       end
@@ -263,7 +265,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :change_status_of_post,{token: session[:token], post_id: 1,status: 0 }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :change_status_of_post,{token: session[:token], post_id: post_id,status: 0 }
         JSON.parse(response.body)["data"]["status"].should eq(0)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
       end
@@ -274,7 +277,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :change_status_of_post,{token: nil, post_id: 1,status: 0 }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :change_status_of_post,{token: nil, post_id: post_id,status: 0 }
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
       end
       it "failed with status 101 if missing param post_id " do
@@ -290,7 +294,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :change_status_of_post,{token: session[:token], post_id: 1,status: nil }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :change_status_of_post,{token: session[:token], post_id: post_id,status: nil }
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
       end
     end
@@ -303,7 +308,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :update_post,{token: session[:token], post_id: 1,title: "new title" }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :update_post,{token: session[:token], post_id: post_id,title: "new title" }
         JSON.parse(response.body)["data"]["title"].should eq("new title")
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
       end
@@ -346,7 +352,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :delete_post,{token: session[:token], post_id: 1 }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :delete_post,{token: session[:token], post_id: post_id }
         Post.count.should eq(0)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
       end
@@ -419,7 +426,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment" }
         Comment.count.should eq(1)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
       end
@@ -448,7 +456,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :create_comment,{token: session[:token], post_id: 1,content: nil }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :create_comment,{token: session[:token], post_id: post_id,content: nil }
         Comment.count.should eq(0)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
       end
@@ -460,11 +469,11 @@ RSpec.describe ApiController, :type => :controller do
       it "update comment" do
         session[:token] = nil
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
-        post_id = JSON.parse(response.body)["data"]["id"]
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        comment_id = JSON.parse(response.body)["data"]["id"]
+        post_id = JSON.parse(response.body)["data"]["id"]
         post :create_comment,{token: session[:token], post_id: post_id,content: "comment" }
+        comment_id = JSON.parse(response.body)["data"]["id"]
         post :update_comment,{token: session[:token],comment_id: comment_id, content: "new content comment" }
         JSON.parse(response.body)["data"]["content"].should eq("new content comment")
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(200)
@@ -527,7 +536,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment" }
         post :delete_comment,{token: nil,comment_id: 1 }
         Comment.count.should eq(1)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
@@ -537,7 +547,8 @@ RSpec.describe ApiController, :type => :controller do
         post :create_user, FactoryGirl.attributes_for(:param_user, username: "username01", password: "123456", user_type: "admin")
         post :login, {username: "username01", password: "123456"}
         post :create_post,{token: session[:token], title: "title", short_description: "short description",content: "content" }
-        post :create_comment,{token: session[:token], post_id: 1,content: "comment" }
+        post_id = JSON.parse(response.body)["data"]["id"]
+        post :create_comment,{token: session[:token], post_id: post_id,content: "comment" }
         post :delete_comment,{token: session[:token],comment_id: nil }
         Comment.count.should eq(1)
         expect(JSON.parse(response.body)["meta"]["status"]).to eq(101)
