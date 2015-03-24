@@ -144,7 +144,7 @@ class ApiController < ApplicationController
   # ---------------------------------------
   def get_user_info
     render_failed(101, t('missing_param', {:param =>'user_id'})) and return if params[:user_id].nil?
-    user = User.find_by(params[:user_id])
+    user = User.find_by(id: params[:user_id])
     render_failed(102,t('invalid_param',:param => 'user_id')) and return if user.nil?
     profile = Profile.find_by(user_id: user.id)
     image = Image.find_by(subject_type: "avatar", subject_id: profile.id)
